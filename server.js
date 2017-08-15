@@ -3,22 +3,83 @@ var morgan = require('morgan');
 var path = require('path');
 
 var app = express();
+
+var articles = {
+    'article-one' : {
+        title:'Prasheeba Article One',
+        heading:'Article One',
+        date:'15 Aug 2017',
+        content:`
+            <p>
+                The purpose of psychology is to give us a completely different idea of the things we know best. 
+            </p>`
+    },
+    'article-two' : {
+        title:'Prasheeba Article Two',
+        heading:'Article Two',
+        date:'15 Aug 2017',
+        content:`
+            <p>
+                If the only tool you have is a hammer, you tend to see every problem as a nail. 
+            </p>`
+    },
+    'article-three' : {
+    title:'Prasheeba Article Three',
+    heading:'Article Three',
+    date:'15 Aug 2017',
+    content:`
+        <p>
+            Everybody should do at least two things each day that he hates to do, just for practice. 
+        </p>`
+    }
+};
+
+function createTemplate (data) {
+    var title = data.title;
+    var heading = data.heading;
+    var date = data.date;
+    var content = data.content;
+    var htmltemplate = `
+     <html>
+        <head>
+            <title>
+                ${title}
+            </title>
+            <meta name="viewport" content="width=device=width, initial-scale=1" />
+            <link href="/ui/style.css" rel="stylesheet" />
+            
+        </head>
+        <body>
+            <div class="container">
+                <div>
+                    <a href="/">Home</a>
+                </div>
+                <hr/>
+                <h3>
+                    ${heading}
+                </h3>
+                <div>
+                    ${date}
+                </div>
+                <div>
+                    ${content}
+                </div>
+            </div>
+        </body>
+    </html>   
+    `;
+    return htmltemplate;
+}
+
 app.use(morgan('combined'));
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-app.get('/articleone', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', 'article-one.html'));
-});
-
-app.get('/articleTwo', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', 'article-two.html'));
-});
-
-app.get('/articleThree', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', 'article-three.html'));
+app.get('/:articleName', function (req, res) {
+    var articleName = req.params.articleName;
+  res.send(createTemplate(articles[articleName]));
 });
 
 app.get('/ui/style.css', function (req, res) {
